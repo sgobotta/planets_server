@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+
+  db:
+    container_name: example_server_db
+    image: postgres
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+volumes:
+  pg_data:
+    name: example_server_pg_data
