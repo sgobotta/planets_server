@@ -1,0 +1,28 @@
+<.header>
+  Planet {@planet.id}
+  <:subtitle>This is a planet record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/planets/#{@planet}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit planet</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name">{@planet.name}</:item>
+  <:item title="Description">{@planet.description}</:item>
+  <:item title="Dimension">{@planet.dimension}</:item>
+</.list>
+
+<.back navigate={~p"/planets"}>Back to planets</.back>
+
+<.modal :if={@live_action == :edit} id="planet-modal" show on_cancel={JS.patch(~p"/planets/#{@planet}")}>
+  <.live_component
+    module={ServerWeb.PlanetLive.FormComponent}
+    id={@planet.id}
+    title={@page_title}
+    action={@live_action}
+    planet={@planet}
+    patch={~p"/planets/#{@planet}"}
+  />
+</.modal>

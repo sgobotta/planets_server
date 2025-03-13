@@ -18,13 +18,20 @@ defmodule ServerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/planets", PlanetLive.Index, :index
+    live "/planets/new", PlanetLive.Index, :new
+    live "/planets/:id/edit", PlanetLive.Index, :edit
+
+    live "/planets/:id", PlanetLive.Show, :show
+    live "/planets/:id/show/edit", PlanetLive.Show, :edit
   end
 
   scope "/api" do
     pipe_through :api
 
-    forward "/graphql", Absinthe.Plug, schema: ServerWeb.Schemas
-    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ServerWeb.Schemas
+    forward "/graphql", Absinthe.Plug, schema: ServerWeb.Schema
+    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ServerWeb.Schema
   end
 
   # Other scopes may use custom stacks.

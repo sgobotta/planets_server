@@ -1,0 +1,43 @@
+<.header>
+  Listing Planets
+  <:actions>
+    <.link patch={~p"/planets/new"}>
+      <.button>New Planet</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="planets"
+  rows={@streams.planets}
+  row_click={fn {_id, planet} -> JS.navigate(~p"/planets/#{planet}") end}
+>
+  <:col :let={{_id, planet}} label="Name">{planet.name}</:col>
+  <:col :let={{_id, planet}} label="Description">{planet.description}</:col>
+  <:col :let={{_id, planet}} label="Dimension">{planet.dimension}</:col>
+  <:action :let={{_id, planet}}>
+    <div class="sr-only">
+      <.link navigate={~p"/planets/#{planet}"}>Show</.link>
+    </div>
+    <.link patch={~p"/planets/#{planet}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, planet}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: planet.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="planet-modal" show on_cancel={JS.patch(~p"/planets")}>
+  <.live_component
+    module={ServerWeb.PlanetLive.FormComponent}
+    id={@planet.id || :new}
+    title={@page_title}
+    action={@live_action}
+    planet={@planet}
+    patch={~p"/planets"}
+  />
+</.modal>
