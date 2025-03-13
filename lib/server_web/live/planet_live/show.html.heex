@@ -9,6 +9,10 @@
 </.header>
 
 <.list>
+  <:item title="Picture">
+    {@planet.picture}
+    <img src={ServerWeb.Router.Helpers.static_path(ServerWeb.Endpoint, @planet.picture)} />
+  </:item>
   <:item title="Name">{@planet.name}</:item>
   <:item title="Description">{@planet.description}</:item>
   <:item title="Dimension">{@planet.dimension}</:item>

@@ -8,6 +8,7 @@ defmodule Server.Universe.Planet do
     field :name, :string
     field :description, :string
     field :dimension, :decimal
+    field :picture, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -15,7 +16,7 @@ defmodule Server.Universe.Planet do
   @doc false
   def changeset(planet, attrs) do
     planet
-    |> cast(attrs, [:name, :description, :dimension])
+    |> cast(attrs, [:name, :description, :dimension, :picture])
     |> validate_required([:name, :description, :dimension])
   end
 end
