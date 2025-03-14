@@ -19,30 +19,27 @@ defmodule ServerWeb.PlanetLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-      <section phx-drop-target={@uploads.picture.ref}>
-        <%!-- render each picture entry --%>
-        <article :for={entry <- @uploads.picture.entries} class="upload-entry">
-          <figure>
-            <.live_img_preview entry={entry} />
-            <figcaption>{entry.client_name}</figcaption>
-          </figure>
+        <%!-- <section phx-drop-target={@uploads.picture.ref}>
+          <article :for={entry <- @uploads.picture.entries} class="upload-entry">
+            <figure>
+              <.live_img_preview entry={entry} />
+              <figcaption>{entry.client_name}</figcaption>
+            </figure>
 
-          <%!-- entry.progress will update automatically for in-flight entries --%>
-          <progress value={entry.progress} max="100"> {entry.progress}% </progress>
+            <progress value={entry.progress} max="100"> {entry.progress}% </progress>
 
-          <%!-- a regular click event whose handler will invoke Phoenix.LiveView.cancel_upload/3 --%>
-          <button type="button" phx-click="cancel-upload" phx-value-ref={entry.ref} aria-label="cancel">&times;</button>
+            <button type="button" phx-click="cancel-upload" phx-value-ref={entry.ref} aria-label="cancel">&times;</button>
 
-          <%!-- Phoenix.Component.upload_errors/2 returns a list of error atoms --%>
-          <p :for={err <- upload_errors(@uploads.picture, entry)} class="alert alert-danger">{error_to_string(err)}</p>
-        </article>
+            <p :for={err <- upload_errors(@uploads.picture, entry)} class="alert alert-danger">{error_to_string(err)}</p>
+          </article>
 
-        <%!-- Phoenix.Component.upload_errors/1 returns a list of error atoms --%>
-        <p :for={err <- upload_errors(@uploads.picture)} class="alert alert-danger">
-          {error_to_string(err)}
-        </p>
-      </section>
-        <.live_file_input upload={@uploads.picture} />
+          <p :for={err <- upload_errors(@uploads.picture)} class="alert alert-danger">
+            {error_to_string(err)}
+          </p>
+        </section> --%>
+        <%!-- <.live_file_input upload={@uploads.picture} />
+         --%>
+        <.input field={@form[:picture]} type="text" label="Picture URL" />
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:dimension]} type="number" label="Dimension" step="any" />
@@ -73,21 +70,22 @@ defmodule ServerWeb.PlanetLive.FormComponent do
   end
 
   def handle_event("save", %{"planet" => planet_params}, socket) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :picture, fn %{path: path}, entry ->
-        dest = Path.join(Application.app_dir(:server, "priv/static/uploads.#{hd(MIME.extensions(entry.client_type))}"), Path.basename(path))
-        # You will need to create `priv/static/uploads` for `File.cp!/2` to work.
-        File.cp!(path, dest)
-        {:ok, ~p"/uploads/#{Path.basename(dest)}"}
-      end)
+    # uploaded_files =
+    #   consume_uploaded_entries(socket, :picture, fn %{path: path}, entry ->
+    #     IO.inspect(entry, label: "Entry")
+    #     dest = Path.join(Application.app_dir(:server, "priv/static/uploads"), Path.basename(path))
+    #     # You will need to create `priv/static/uploads` for `File.cp!/2` to work.
+    #     File.cp!(path, dest)
+    #     {:ok, ~p"/uploads/#{Path.basename(dest)}"}
+    #   end)
+    # socket = update(socket, :picture, &(&1 ++ uploaded_files))
 
-    IO.inspect(uploaded_files, label: "Uploaded Files!")
+    # planet_params = case uploaded_files do
+    #   [] -> planet_params
+    #   [uploaded_file] -> Map.merge(planet_params, %{"picture" => uploaded_file})
+    # end
 
-    socket = update(socket, :picture, &(&1 ++ uploaded_files))
-
-    IO.inspect(planet_params, label: "planet_params")
-
-    save_planet(socket, socket.assigns.action, Map.merge(planet_params, %{"picture" => hd(uploaded_files)}))
+    save_planet(socket, socket.assigns.action, planet_params)
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
