@@ -11,6 +11,16 @@ defmodule ServerWeb.Resolvers.Content do
     {:ok, Universe.get_planet!(planet_id) |> parse_planet}
   end
 
+  def create_planet(_parent, args, _resolution) do
+    case Universe.create_planet(args) do
+      {:ok, %Universe.Planet{} = planet} ->
+        {:ok, parse_planet(planet)}
+
+      {:error, %Ecto.Changeset{} = cs} ->
+        {:error, cs.errors}
+    end
+  end
+
   defp parse_planets(planets), do: Enum.map(planets, &parse_planet/1)
 
   defp parse_planet(%Universe.Planet{} = planet) do

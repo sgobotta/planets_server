@@ -17,4 +17,16 @@ defmodule ServerWeb.Schema do
       resolve &Resolvers.Content.get_planet/3
     end
   end
+
+  mutation do
+    @desc "Create a planet"
+    field :create_planet, type: :planet do
+      arg :name, non_null(:string)
+      arg :description, non_null(:string)
+      arg :dimension, non_null(:float)
+      arg :picture, non_null(:string)
+
+      resolve &Resolvers.Content.create_planet/3
+    end
+  end
 end

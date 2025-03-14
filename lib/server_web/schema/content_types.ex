@@ -6,5 +6,6 @@ defmodule ServerWeb.Schema.ContentTypes do
     field :name, :string
     field :description, :string
     field :dimension, :float
+    field :picture, :string
   end
 end
